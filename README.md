@@ -1,6 +1,16 @@
 ### 这一个基于原生js写的插件库我们叫他zquery吧
 
-> js库那么多，为什么要多此一举写个api不多的插件，因为有人常问我你js还不错，那你会用哪些插件，多说几个我们公司找大牛都用
-插件开发的。...难道你们是外包公司,不知道插件是人用js写出来的吗？
+**$.getPar: 获取url对应的传参**
+```
+// 调用方法
+alert(GetQueryString("参数名1"));
+alert(GetQueryString("参数名2"));
+alert(GetQueryString("参数名3"));
 
-> 写腻了组件，还是自己写插件比较好玩，写一个自己思路常用的插件，来抵抗工作效率，哈哈！
+//如果url没有传参需加判断防止报错
+var myurl=GetQueryString("url");
+if(myurl !=null && myurl.toString().length>1)
+{
+   alert(GetQueryString("url"));
+}
+```
