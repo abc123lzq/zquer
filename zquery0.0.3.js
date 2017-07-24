@@ -10,8 +10,14 @@
 
     function $(ZARG) {
         return new zquery(ZARG);
-    };
+    }
 
+    /**
+     *事件绑定
+     * @param obj 监听对象
+     * @param events 事件对象
+     * @param fn  cb
+     */
     function binEvent(obj, events, fn) {
         if (obj.addEventListener) {
             obj.addEventListener(events, function (ev) {
@@ -20,8 +26,7 @@
                     ev.cancelBubble = true;
                 }
             }, false);
-        } else {
-
+        } else {  //ie8
             obj.attachEvent('on' + events, function () {
                 if (fn() === false) {
                     window.event.cancelBubble = true;
@@ -30,7 +35,6 @@
             }, false);
         }
     }
-
 
     function getByClass(oParent, sClass) {
         var arr = [];
@@ -44,6 +48,14 @@
         return arr;
     }
 
+    function getStyle(obj, attr) {
+        if (obj.currentStyle) { //ie
+            return obj.currentStyle[attr]
+        } else {
+            return getComputedStyle(obj, false)[attr];
+        }
+    }
+
     function toArray(elems) {
         var arr = [];
         for (var i = 0; i < elems.length; i++) {
@@ -55,10 +67,12 @@
     }
 
 
+    /**
+     * zquery
+     */
     function zquery(zARG) {
 
         this.elements = [];
-
 
         switch (typeof zARG) {
             case 'function':
@@ -87,22 +101,6 @@
 
         }
     }
-
-
-    function getStyle(obj, attr) {
-        if (obj.currentStyle) { //ie
-            return obj.currentStyle[attr]
-        } else {
-            return getComputedStyle(obj, false)[attr];
-        }
-    }
-
-    zquery.prototype.on = function (events, fn) {
-        for (var i = 0; i < this.elements.length; i++) {
-            binEvent(this.elements[i], events, fn);
-        }
-        return this;
-    };
 
     zquery.prototype.html = function (str) {
         if (str) {
@@ -168,6 +166,20 @@
         return this;
 
     };
+    zquery.prototype.scrollTop = function (num, cb, fn) {
+        if (arguments.length > 2) {
+            window.onscroll = function () {
+                var scrolltop = document.documentElement.scrollTop || document.body.scrollTop;
+                if (scrolltop > num) {
+                    cb();
+                } else {
+                    fn();
+                }
+            };
+        } else if (arguments.length === 0) {
+            return document.documentElement.scrollTop || document.body.scrollTop;
+        }
+    };
     zquery.prototype.attr = function (attr, value) {
         if (arguments.length === 2) {
             for (var i = 0; i < this.elements.length; i++) {
@@ -213,17 +225,22 @@
         return $(arr);
     };
 
-
-    $.trim = function (str) {
-        return str.replace(/^\s+|\s+$/g, '');
-    };
-
-    $.extend = function (json) {
-        for (var attr in json) {
-            $[attr] = json[attr];
+    /**
+     *
+     * @param events  自定义绑定事件
+     * @param fn cb
+     * @returns {zquery}
+     */
+    zquery.prototype.on = function (events, fn) {
+        for (var i = 0; i < this.elements.length; i++) {
+            binEvent(this.elements[i], events, fn);
         }
+        return this;
     };
 
+    /**
+     *zquery的实例方法
+     */
     $.fn = {};
     $.fn.extend = function (json) {
         for (var attr in json) {
@@ -231,6 +248,120 @@
         }
     };
 
+
+    /**
+     *
+     * animate  动画
+     * @param obj zquery对象 $()
+     * @param attrJson  json写法{}
+     * @param fn cb
+     * @param num  速度
+     */
+    zquery.prototype.animate = function (attrJson, fn, num) {
+        var that = this;
+
+
+        for (var i = 0; i < that.elements.length; i++) {
+            clearInterval(that.elements[i].timer);
+            (function (i) {
+                that.elements[i].timer = setInterval(function () {
+                    var flag = true;//回调开关
+                    var attr = '';
+                    for (attr in attrJson) {
+                        var current = '';
+
+                        if (attr === 'opacity') {
+                            // ie不支持默认名返回0
+                            current = Math.round(parseInt(getByClass(that.elements[i].attr) * 100)) || 0;
+                        } else {
+                            current = parseInt(getStyle(that.elements[i], attr));
+                        }
+
+                        //步长
+                        var step = (attrJson[attr] - current) / 10;
+                        step = step > 0 ? Math.ceil(step) : Math.floor(step);
+
+                        if (attr === 'opacity') {
+                            if ('opacity' in that.elements[i].style) {//如果游览器支持
+                                that.elements[i].style.opacity = (current + step) / 100;
+                            } else {//ie8
+                                that.elements[i].style.filter = "alpha(opacity = " + (current + step) * 10 + ")";
+                            }
+                        } else if (attr === 'zIndex') {
+                            that.elements[i].style.zIndex = current + step;
+
+                        } else {
+                            console.log();
+                            that.elements[i].style[attr] = (current + step) + 'px';
+
+                        }
+
+                        if (current !== attrJson[attr]) {//对比两值，看是否到终点了
+                            flag = false;
+                        }
+
+                        if (flag) {
+                            clearInterval(this.timer);
+                            if (fn) {
+                                fn();
+                            }
+                            clearInterval(that.elements[i].timer);
+                        }
+
+                    }
+                }, num);
+
+            })(i);
+
+        }
+
+
+        return that;
+
+    };
+
+
+    /**
+     * zquery的工具法
+     * 无需实例化就能调用函数
+     */
+    $.extend = function (json) {
+        for (var attr in json) {
+            $[attr] = json[attr];
+        }
+    };
+
+    /**
+     * 获取ulr传参
+     * @param name  对象传参名字？sb=123
+     * @returns {null}
+     */
+    $.getPar = function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return unescape(r[2])
+        } else {
+            return null;
+        }
+
+    };
+
+    /**
+     * 去掉字符串首尾空格
+     * @param str
+     * @returns {XML|string|void}
+     */
+    $.trim = function (str) {
+        return str.replace(/^\s+|\s+$/g, '');
+    };
+
+
+    /**
+     * 阿贾克斯
+     * @param obj  json对象 {}
+     * @returns {boolean}
+     */
     $.ajax = function ajax(obj) {
         var xmlhttp, type, url, async, dataType, data;
         if (typeof(obj) != 'object')  return false;
@@ -257,7 +388,7 @@
                     url += '&' + data;
                 }
             }
-        }
+        };
         if (window.XMLHttpRequest) {
             xmlhttp = new XMLHttpRequest();
         } else {
@@ -287,7 +418,6 @@
             ele.src = url;
 
 
-            return;
         } else {
             formatParams();
             xmlhttp.open(type, url, async);
@@ -325,13 +455,6 @@
         }
     };
 
-
-    $.getPar = function (name) { 
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
-        if (r != null)return unescape(r[2]);
-        return null;
-    };
 
     window.$ = $;
 
