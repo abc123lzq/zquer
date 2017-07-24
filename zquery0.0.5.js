@@ -166,14 +166,14 @@
         return this;
 
     };
-    zquery.prototype.scrollTop = function (num, cb, fn) {
+    zquery.prototype.scrollTop = function (num, cb1, bc2) {
         if (arguments.length > 2) {
             window.onscroll = function () {
                 var scrolltop = document.documentElement.scrollTop || document.body.scrollTop;
                 if (scrolltop > num) {
-                    cb();
+                    cb1();
                 } else {
-                    fn();
+                    bc2();
                 }
             };
         } else if (arguments.length === 0) {
@@ -227,37 +227,13 @@
 
     /**
      *
-     * @param events  自定义绑定事件
-     * @param fn cb
-     * @returns {zquery}
-     */
-    zquery.prototype.on = function (events, fn) {
-        for (var i = 0; i < this.elements.length; i++) {
-            binEvent(this.elements[i], events, fn);
-        }
-        return this;
-    };
-
-    /**
-     *zquery的实例方法
-     */
-    $.fn = {};
-    $.fn.extend = function (json) {
-        for (var attr in json) {
-            zquery.prototype[attr] = json[attr];
-        }
-    };
-
-
-    /**
-     *
      * animate  动画
      * @param obj zquery对象 $()
      * @param attrJson  json写法{}
      * @param fn cb
      * @param num  速度
      */
-    zquery.prototype.animate = function (attrJson, fn, num) {
+    zquery.prototype.animate = function (attrJson, cb, num) {
         var that = this;
 
 
@@ -302,8 +278,8 @@
 
                         if (flag) {
                             clearInterval(this.timer);
-                            if (fn) {
-                                fn();
+                            if (cb) {
+                                cb();
                             }
                             clearInterval(that.elements[i].timer);
                         }
@@ -318,6 +294,30 @@
 
         return that;
 
+    };
+
+
+    /**
+     *
+     * @param events  自定义绑定事件
+     * @param fn cb
+     * @returns {zquery}
+     */
+    zquery.prototype.on = function (events, fn) {
+        for (var i = 0; i < this.elements.length; i++) {
+            binEvent(this.elements[i], events, fn);
+        }
+        return this;
+    };
+
+    /**
+     *zquery的实例方法
+     */
+    $.fn = {};
+    $.fn.extend = function (json) {
+        for (var attr in json) {
+            zquery.prototype[attr] = json[attr];
+        }
     };
 
 
