@@ -37,3 +37,23 @@ window.addEventListener('load', function () {},fasle)
 
 document.addEventListener('DOMContentLoaded', function () {},fasle)
 ```
+
+**$.bindMyEvent自定义事件绑定， $.fireMyEvent：自定义事件触发 **
+```
+   $.ready(function () {
+            var txs = $('.txxxs');
+            $.bindMyEvent(txs, 'hello', function () {
+                console.log('你好')
+            });
+            $.bindMyEvent(txs, 'world', function () {
+                console.log('世界')
+            });
+
+            $.fireMyEvent(txs, 'hello');
+            $.fireMyEvent(txs, 'world');
+
+        });
+
+```
+
+
