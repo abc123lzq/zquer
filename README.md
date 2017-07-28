@@ -55,5 +55,9 @@ document.addEventListener('DOMContentLoaded', function () {},fasle)
         });
 
 ```
-
+**$.lazyLoad(delay, time): 图片懒加载**
+```
+//html约定
+<img src="default.jpg" data-src="theTrueImgXXX.jpg" alt="">
+```
 
