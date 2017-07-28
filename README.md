@@ -35,5 +35,5 @@ window.addEventListener('load', function () {},fasle)
  
 //等价于，可以多次调用,并且操作dom比onload早
 
-document.addEventListener('DOMContentLoaded', f function () {},fasle)
+document.addEventListener('DOMContentLoaded', function () {},fasle)
 ```
