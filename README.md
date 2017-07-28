@@ -19,3 +19,21 @@ if(myurl !=null && myurl.toString().length>1)
 
 **animate (attrJson, fn, num)**
 > attrJson属性用 json格式书写，fn为回调，num为速度
+
+
+**完档加载完毕**
+```
+$(function(){})
+
+//等价于，可以多次调用
+
+window.addEventListener('load', function () {},fasle)
+```
+**dom加载完毕**
+```
+ $.ready(function () {}
+ 
+//等价于，可以多次调用,并且操作dom比onload早
+
+document.addEventListener('DOMContentLoaded', f function () {},fasle)
+```
