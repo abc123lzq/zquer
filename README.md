@@ -38,7 +38,7 @@ window.addEventListener('load', function () {},fasle)
 document.addEventListener('DOMContentLoaded', function () {},fasle)
 ```
 
-**$.bindMyEvent自定义事件绑定， $.fireMyEvent：自定义事件触发 **
+**$.bindMyEvent自定义事件绑定， $.fireMyEvent：自定义事件触发**
 ```
    $.ready(function () {
             var txs = $('.txxxs');
