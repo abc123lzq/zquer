@@ -14,10 +14,10 @@ if(myurl !=null && myurl.toString().length>1)
    alert(GetQueryString("url"));
 }
 ```
-**scrollTop (num, cb1, cb2)**
+**scrollTop (num, cb1, cb2)：滚动**
 > num是滚动值得判断界点，成立调用cb1，不成立调用cb2
 
-**animate (attrJson, fn, num)**
+**animate (attrJson, fn, num)： 动画**
 > attrJson属性用 json格式书写，fn为回调，num为速度
 
 
