@@ -36,11 +36,13 @@
         }
     }
 
-    function getByClass(oParent, sClass) {
+   function getByClass(oParent, sClass) {
         var arr = [];
         var elems = oParent.getElementsByTagName('*');
         for (var i = 0; i < elems.length; i++) {
-            if (elems[i].className === sClass) {
+            //解决多类无法全选
+            var arrClassName = elems[i].className.split(' ', 1)[0];
+            if (arrClassName === sClass) {
                 arr.push(elems[i]);
             }
         }
@@ -229,6 +231,33 @@
     zquery.prototype.isArray = Array.isArray || function (object) {
             return object instanceof Array
         };
+
+ zquery.prototype.addClass = function (className) {
+        for (var i = 0; i < this.elements.length; i++) {
+            if (this.elements[i].className === "") { //是否有设置属性
+                this.elements[i].className = className;
+            } else {
+                var arrClassName = this.elements[i].className.split(" ");
+                var index = arrClassName.indexOf(className);
+                if (index === -1) { //是否已经存在这个名字
+                    this.elements[i].className += ' ' + className;
+                }
+            }
+        }
+    };
+    zquery.prototype.removeClass = function (className) {
+        for (var i = 0; i < this.elements.length; i++) {
+            if (this.elements[i].className !== "") {
+                var arrClassName = this.elements[i].className.split(" ");
+                var index = arrClassName.indexOf(className);
+                if (index !== -1) {  //如果存在要删除的class
+                    arrClassName.splice(index, 1);
+                }
+                this.elements[i].className = arrClassName.join(' ');
+            }
+        }
+
+    };
 
 
     /**
