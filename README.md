@@ -60,13 +60,12 @@ document.addEventListener('DOMContentLoaded', function () {},fasle)
 //html约定
 <img src="default.jpg" data-src="theTrueImgXXX.jpg" alt="">
 ```
+常用逻辑（待考核是否真的入库）
+```
 $.DateType获取各种时间格式
-
 $.rule常用正则
-
 $.safeXSS防止xss攻击
- 
 $.createLink 动态创建css
- 
 $.createScript动态创建js
+```
 
