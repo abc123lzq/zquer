@@ -7,6 +7,7 @@
 
     var _zquery = zquery;
     var _$ = $;
+    var isIE = !!window.ActiveXObject || "ActiveXObject" in window;
 
     function $(ZARG) {
         return new zquery(ZARG);
@@ -211,32 +212,6 @@
         var elems = this.elements[0].parentNode.children;
         return elems.length
     };
-    zquery.prototype.val=function () {
-        var val = [];
-        if(this.elements.length===1){
-            val = this.elements[0].value;
-        }else{
-            for(var i=0;i<this.elements.length;i++){
-                var iVal = this.elements[i].value;
-                val.push(iVal);
-            }
-        }
-
-        return val;
-    };
-    zquery.prototype.text=function () {
-        var text = [];
-        if(this.elements.length===1){
-            text=this.elements[0].textContent
-        }else {
-            for(var i=0;i<this.elements.length;i++){
-                var iText=this.elements[i].textContent;
-                text.push(iText);
-            }
-        }
-
-        return text;
-    };
     zquery.prototype.find = function (sel) {
         var arr = [];
         if (sel.charAt(0) === '.') {//class
@@ -254,10 +229,49 @@
 
         return $(arr);
     };
+    zquery.prototype.val=function () {
+        var val = [];
+        if(this.elements.length===1){
+            val = this.elements[0].value;
+        }else{
+            for(var i=0;i<this.elements.length;i++){
+                var iVal = this.elements[i].value;
+                val.push(iVal);
+            }
+        }
+
+        return val;
+    };
+    zquery.prototype.text=function (str) {
+        var text = [];
+        if(str!==undefined){
+            for(var i=0;i<this.elements.length;i++){
+                this.elements[i].innerHTML = str;
+            }
+        }else{
+            if(this.elements.length===1){
+                var iText_1 = this.elements[0];
+                if(isIE){
+                    text = iText_1.innerText;
+                }else {
+                    text = iText_1.textContent;
+                }
+            }else {
+                for(var i=0;i<this.elements.length;i++){
+                    var iText=this.elements[i];
+                    if(isIE){
+                        text.push(iText.innerText)
+                    }else {
+                        text.push(iText.textContent);
+                    }
+                }
+            }
+        }
+        return text;
+    };
     zquery.prototype.isArray = Array.isArray || function (object) {
         return object instanceof Array
     };
-
     zquery.prototype.addClass = function (className) {
         for (var i = 0; i < this.elements.length; i++) {
             if (this.elements[i].className === "") { //是否有设置属性
@@ -296,9 +310,8 @@
      */
     zquery.prototype.animate = function (attrJson, cb, num) {
         var that = this;
-
-
         for (var i = 0; i < that.elements.length; i++) {
+            // this.elements[i].style.position = 'absolute';
             clearInterval(that.elements[i].timer);
             (function (i) {
                 that.elements[i].timer = setInterval(function () {
@@ -306,18 +319,16 @@
                     var attr = '';
                     for (attr in attrJson) {
                         var current = '';
-
                         if (attr === 'opacity') {
                             // ie不支持默认名返回0
                             current = Math.round(parseInt(getByClass(that.elements[i].attr) * 100)) || 0;
                         } else {
+                            console.log(123);
                             current = parseInt(getStyle(that.elements[i], attr));
                         }
-
                         //步长
                         var step = (attrJson[attr] - current) / 10;
                         step = step > 0 ? Math.ceil(step) : Math.floor(step);
-
                         if (attr === 'opacity') {
                             if ('opacity' in that.elements[i].style) {//如果游览器支持
                                 that.elements[i].style.opacity = (current + step) / 100;
@@ -326,11 +337,9 @@
                             }
                         } else if (attr === 'zIndex') {
                             that.elements[i].style.zIndex = current + step;
-
                         } else {
                             console.log();
                             that.elements[i].style[attr] = (current + step) + 'px';
-
                         }
 
                         if (current !== attrJson[attr]) {//对比两值，看是否到终点了
@@ -351,10 +360,7 @@
             })(i);
 
         }
-
-
         return that;
-
     };
 
     /**
@@ -728,13 +734,11 @@
                 }
             }
         }
-
         //初渲染
         lazyLoad();
         //滚动渲染
         window.addEventListener('scroll', thorttle(lazyLoad, delay, time), false)
     };
-
 
     window.$ = $;
 
