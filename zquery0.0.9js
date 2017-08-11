@@ -211,6 +211,32 @@
         var elems = this.elements[0].parentNode.children;
         return elems.length
     };
+    zquery.prototype.val=function () {
+        var val = [];
+        if(this.elements.length===1){
+            val = this.elements[0].value;
+        }else{
+            for(var i=0;i<this.elements.length;i++){
+                var iVal = this.elements[i].value;
+                val.push(iVal);
+            }
+        }
+
+        return val;
+    };
+    zquery.prototype.text=function () {
+        var text = [];
+        if(this.elements.length===1){
+            text=this.elements[0].textContent
+        }else {
+            for(var i=0;i<this.elements.length;i++){
+                var iText=this.elements[i].textContent;
+                text.push(iText);
+            }
+        }
+
+        return text;
+    };
     zquery.prototype.find = function (sel) {
         var arr = [];
         if (sel.charAt(0) === '.') {//class
