@@ -18,7 +18,7 @@ if(myurl !=null && myurl.toString().length>1)
 > num是滚动值得判断界点，成立调用cb1，不成立调用cb2
 
 **animate (attrJson, fn, num)： 动画**
-> attrJson属性用 json格式书写，fn为回调，num为速度
+> attrJson属性用 json格式书写，fn为回调，num为速度越大越慢
 
 
 **完档加载完毕**
@@ -60,4 +60,13 @@ document.addEventListener('DOMContentLoaded', function () {},fasle)
 //html约定
 <img src="default.jpg" data-src="theTrueImgXXX.jpg" alt="">
 ```
+$.DateType获取各种时间格式
+
+$.rule常用正则
+
+$.safeXSS防止xss攻击
+ 
+$.createLink 动态创建css
+ 
+$.createScript动态创建js
 
